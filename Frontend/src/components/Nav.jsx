@@ -8,9 +8,9 @@ export const Nav = () => {
         <>
             <nav>
                 <div id='logo'>
-                    A
+                    Shop
                 </div>
-                <div>
+                <div className='add'>
                     <span>Add</span>
                     <RiAddLargeLine />
                 </div>
