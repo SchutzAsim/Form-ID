@@ -27,9 +27,6 @@ export const Home = () => {
 
     }, [DB_API])
 
-    // console.log(HomeData)
-
-
     return (
         <>
             <div className="card-container">
@@ -56,8 +53,8 @@ export const Home = () => {
                                 <span className="value">{row.Service_Type}</span>
                             </div>
                             <div className="data-row">
-                                <span className="label">Month</span>
-                                <span className="value">{row.Month}</span>
+                                <span className="label">Created At</span>
+                                <span className="value">{row.Created_at}</span>
                             </div>
                             <div className="data-row">
                                 <span className="label">Application ID</span>
@@ -90,3 +87,5 @@ export const Home = () => {
         </>
     )
 }
+
+
