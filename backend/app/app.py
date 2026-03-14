@@ -1,18 +1,16 @@
 from fastapi import FastAPI
+from fastapi.responses import JSONResponse
 from app.databases.db import cursor
+from app.model.model import home_Entity, home_Entitys
 
 app = FastAPI()
 
 @app.get("/home")
 async def home():
-    select_query = "SELECT * FROM a"
-    # data_to_find = ("1",)
+    select_query = "SELECT * FROM logs"
+    cursor.execute(select_query)
+    data = cursor.fetchall()
+    result = home_Entitys(data)
+    return JSONResponse(content=result, status_code=200)
 
-    # Execute the query
-    print(cursor.execute(select_query))
-    result = cursor.fetchall()
-    return result
 
-# @app.get("/home/{id}")
-# async def data(id: int):
-#     return db.cursor.get(id)
