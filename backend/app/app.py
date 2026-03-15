@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from  fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from app.databases.db import cursor, conn
-from app.model.model import home_Entity, home_Entitys
+from app.model.model import home_Entitys
 from app.schema.schema import CreateLog
 
 app = FastAPI()
@@ -35,8 +35,19 @@ async def home():
 @app.post("/post")
 async def data_post(row: CreateLog):
     try:
+        # Data Insertion Query
         insert_query = f"INSERT INTO logs (Name, Contact, Service, Service_Type, Govt_Fee, Service_Charge, Total_Amount, Month, Created_At, Application_ID, Due) VALUES ('{row.Name}', '{row.Contact}', '{row.Service}', '{row.Service_Type}', '{row.Govt_Fee}', '{row.Service_Charge}', '{row.Total_Amount}', '{row.Month}', '{row.Created_At}', '{row.Application_ID}', '{row.Due}')"
+
+        # Execute Query
         cursor.execute(insert_query)
+
+        # Commit Table data
         conn.commit()
+
+        return JSONResponse(content=f"Insertion Done Successfully!", status_code=201)
     except mariadb.Error as e:
         return JSONResponse(content=f"Insertion Failed! With Status Code {e}", status_code=500)
+
+    finally:
+        print("Insertion Done Successfully!")
+
