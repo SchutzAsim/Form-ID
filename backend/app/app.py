@@ -1,16 +1,16 @@
+import mariadb
 from fastapi import FastAPI
 from  fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from app.databases.db import cursor
+from app.databases.db import cursor, conn
 from app.model.model import home_Entity, home_Entitys
+from app.schema.schema import CreateLog
 
 app = FastAPI()
 
 # origins
 origins = [
-    "http://localhost:5173",
-    "https://adminasimsaifi.netlify.app",
-    "http://127.0.0.1:3000"
+    "http://localhost:5173"
 ]
 
 # make a bridge connection between frontend and admin <---> backend
@@ -28,8 +28,15 @@ async def home():
     cursor.execute(select_query)
     data = cursor.fetchall()
     result = home_Entitys(data)
-    print(len(result))
-    cursor.execute("COMMIT")
+    conn.commit()
     return JSONResponse(content=result, status_code=200)
 
 
+@app.post("/post")
+async def data_post(row: CreateLog):
+    try:
+        insert_query = f"INSERT INTO logs (Name, Contact, Service, Service_Type, Govt_Fee, Service_Charge, Total_Amount, Month, Created_At, Application_ID, Due) VALUES ('{row.Name}', '{row.Contact}', '{row.Service}', '{row.Service_Type}', '{row.Govt_Fee}', '{row.Service_Charge}', '{row.Total_Amount}', '{row.Month}', '{row.Created_At}', '{row.Application_ID}', '{row.Due}')"
+        cursor.execute(insert_query)
+        conn.commit()
+    except mariadb.Error as e:
+        return JSONResponse(content=f"Insertion Failed! With Status Code {e}", status_code=500)

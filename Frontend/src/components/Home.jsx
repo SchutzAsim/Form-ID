@@ -7,6 +7,8 @@ export const Home = () => {
 
     const [HomeData, setHomeData] = useState([])
 
+    HomeData.reverse()
+
     useEffect(() => {
         const api_connect = async () => {
             try {

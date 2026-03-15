@@ -61,7 +61,7 @@ nav div {
 /* Container for all the cards */
 .card-container {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
     gap: 24px;
     padding: 24px;
     background-color: #0f1b26; /* Darkest theme color for main background */
