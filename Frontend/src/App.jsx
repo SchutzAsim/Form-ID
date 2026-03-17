@@ -7,7 +7,7 @@ import { ContainerContext } from './Context/context'
 
 function App() {
 
-  const API_Connect = "http://localhost:8000"
+  const API_Connect = "http://0.0.0.0:8000"
   const [Show, setShow] = useState("home")
 
   return (
