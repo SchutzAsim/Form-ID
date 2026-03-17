@@ -1,13 +1,13 @@
+import { useState } from 'react'
 import { Nav } from './components/Nav'
 import { Home } from './components/Home'
 import { LogForm } from './components/LogForm'
-import { useState } from 'react'
 import { ContainerContext } from './Context/context'
 
 
 function App() {
 
-  const API_Connect = "http://0.0.0.0:8000"
+  const API_Connect = import.meta.env.VITE_API;
   const [Show, setShow] = useState("home")
 
   return (
