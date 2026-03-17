@@ -10,7 +10,8 @@ app = FastAPI()
 
 # origins
 origins = [
-    "http://localhost:5173"
+    "http://localhost:5173",
+    "https://eshopmine.netlify.app/"
 ]
 
 # make a bridge connection between frontend and admin <---> backend
