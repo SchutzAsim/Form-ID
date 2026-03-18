@@ -10,7 +10,8 @@ config = {
     "password": os.getenv("DB_PASSWORD"),
     "host": os.getenv("DB_HOST", "localhost"),
     "port": int(os.getenv("DB_PORT")),
-    "database": os.getenv("DB_DATABASE")
+    "database": os.getenv("DB_DATABASE"),
+    "unix_socket": None
 }
 
 
