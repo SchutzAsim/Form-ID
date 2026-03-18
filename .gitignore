@@ -18,6 +18,7 @@ tempCodeRunnerFile.py
 .venv/
 venv/
 ENV/
+*.env
 env/
 
 # Build & packaging
