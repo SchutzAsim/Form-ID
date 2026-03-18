@@ -1,5 +1,12 @@
 FROM python:3.11-slim
 
+# Install system dependencies for mariadb connector
+RUN apt-get update && apt-get install -y \
+    gcc \
+    pkg-config \
+    libmariadb-dev \
+    && rm -rf /var/lib/apt/lists/*
+
 # Install uv
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
@@ -13,7 +20,7 @@ COPY pyproject.toml uv.lock* ./
 RUN uv sync --frozen --no-dev
 
 # Copy the entire backend directory
-COPY backend/ ./backend/
+COPY . .
 
 # Set Python path
 ENV PYTHONPATH="/app:${PYTHONPATH}"
@@ -22,4 +29,4 @@ ENV PYTHONPATH="/app:${PYTHONPATH}"
 EXPOSE 8181
 
 # Run the Python script directly (this will execute uvicorn.run())
-CMD ["uv", "run", "python", "backend/main.py"]
+CMD ["uv", "run", "python", "main.py"]
