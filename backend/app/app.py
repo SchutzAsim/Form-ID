@@ -39,7 +39,7 @@ async def get_logs():
 @app.post("/post")
 async def post_log(row: CreateLog):
     # Fix date format for mariadb date insertion
-    date = row.Created_At if row.Created_At=='Default' else f'{row.Created_At}'
+    date = row.Created_At if row.Created_At == 'Default' else f"'{row.Created_At}'"
     try:
         # Data Insertion Query
         insert_query = f"INSERT INTO logs (Name, Contact, Service, Service_Type, Govt_Fee, Service_Charge, Total_Amount, Month, Created_At, Application_ID, Due) VALUES ('{row.Name}', '{row.Contact}', '{row.Service}', '{row.Service_Type}', '{row.Govt_Fee}', '{row.Service_Charge}', '{row.Total_Amount}', '{row.Month}', {date}, '{row.Application_ID}', '{row.Due}')"
@@ -60,7 +60,7 @@ async def post_log(row: CreateLog):
 @app.put("/post/update/")
 async def update_log(row: UpdateLog):
     # Fix date format for mariadb date insertion
-    date = row.Created_At if row.Created_At == 'Default' else f'{row.Created_At}'
+    date = row.Created_At if row.Created_At == 'Default' else f"'{row.Created_At}'"
 
     # Checking the ID authenticity for updating
     if row.id > 0:
