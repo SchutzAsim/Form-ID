@@ -18,8 +18,8 @@ export const LogForm = () => {
         Service_Charge: 0,
         Total_Amount: 0,
         Month: '',
-        Created_At: '',
-        Application_ID: '',
+        Created_At: 'Default',
+        Application_ID: 'NA',
         Due: 0
     });
 
@@ -69,38 +69,38 @@ export const LogForm = () => {
                         {/* Text Inputs */}
                         <div className="form-group">
                             <label>Name</label>
-                            <input type="text" name="Name" value={formData.Name} onChange={handleChange} required />
+                            <input type="text" name="Name" value={formData.Name} onChange={handleChange} placeholder='Name' required />
                         </div>
 
                         <div className="form-group">
                             <label>Contact</label>
-                            <input type="text" name="Contact" value={formData.Contact} onChange={handleChange} required />
+                            <input type="text" name="Contact" value={formData.Contact} onChange={handleChange} placeholder='1234567890' required />
                         </div>
 
                         <div className="form-group">
                             <label>Service</label>
-                            <input type="text" name="Service" value={formData.Service} onChange={handleChange} required />
+                            <input type="text" name="Service" value={formData.Service} onChange={handleChange} placeholder='Service' required />
                         </div>
 
                         <div className="form-group">
                             <label>Service Type</label>
-                            <input type="text" name="Service_Type" value={formData.Service_Type} onChange={handleChange} required />
+                            <input type="text" name="Service_Type" value={formData.Service_Type} onChange={handleChange} placeholder='Service Type' required />
                         </div>
 
                         <div className="form-group">
                             <label>Month</label>
                             {/* Could also be type="month" depending on your needs */}
-                            <input type="text" name="Month" value={formData.Month} onChange={handleChange} placeholder="e.g. March" />
+                            <input type="text" name="Month" value={formData.Month} onChange={handleChange} placeholder="e.g. Jan26" required/>
                         </div>
 
                         <div className="form-group">
                             <label>Created At</label>
-                            <input type="text" name="Created_At" value={formData.Created_At} onChange={handleChange} />
+                            <input type="text" name="Created_At" value={formData.Created_At} onChange={handleChange} placeholder='e.g. YYYY-MM-DD' required/>
                         </div>
 
                         <div className="form-group full-width">
                             <label>Application ID</label>
-                            <input type="text" name="Application_ID" value={formData.Application_ID} onChange={handleChange} />
+                            <input type="text" name="Application_ID" value={formData.Application_ID} onChange={handleChange} placeholder='Application no.'/>
                         </div>
 
                         {/* Financial/Integer Inputs */}

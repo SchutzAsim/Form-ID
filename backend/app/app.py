@@ -25,10 +25,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+table_name = 'logs'
+
 @app.get("/home")
 async def get_logs():
     # fetch all rows
-    select_query = "SELECT * FROM logs"
+    select_query = f"SELECT * FROM {table_name}"
     cursor.execute(select_query)
     data = cursor.fetchall()
     conn.commit()
@@ -42,7 +44,7 @@ async def post_log(row: CreateLog):
     date = row.Created_At if row.Created_At == 'Default' else f"'{row.Created_At}'"
     try:
         # Data Insertion Query
-        insert_query = f"INSERT INTO logs (Name, Contact, Service, Service_Type, Govt_Fee, Service_Charge, Total_Amount, Month, Created_At, Application_ID, Due) VALUES ('{row.Name}', '{row.Contact}', '{row.Service}', '{row.Service_Type}', '{row.Govt_Fee}', '{row.Service_Charge}', '{row.Total_Amount}', '{row.Month}', {date}, '{row.Application_ID}', '{row.Due}')"
+        insert_query = f"INSERT INTO {table_name} (Name, Contact, Service, Service_Type, Govt_Fee, Service_Charge, Total_Amount, Month, Created_At, Application_ID, Due) VALUES ('{row.Name}', '{row.Contact}', '{row.Service}', '{row.Service_Type}', '{row.Govt_Fee}', '{row.Service_Charge}', '{row.Total_Amount}', '{row.Month}', {date}, '{row.Application_ID}', '{row.Due}')"
 
         # Execute Query
         cursor.execute(insert_query)
@@ -66,14 +68,14 @@ async def update_log(row: UpdateLog):
     if row.id > 0:
         try:
             # Getting ID is available or not
-            find_query = f"SELECT * FROM logs WHERE ID={row.id}"
+            find_query = f"SELECT * FROM {table_name} WHERE ID={row.id}"
             cursor.execute(find_query)
             find_data = cursor.fetchrows(row.id)
 
             # Update If given ID is available
             if len(find_data) == 1:
                 # Build Query for updating the existing data row
-                update_query = f"UPDATE logs SET Name='{row.Name}', Contact='{row.Contact}', Service='{row.Service}', Service_Type='{row.Service_Type}', Govt_Fee='{row.Govt_Fee}', Service_Charge='{row.Service_Charge}', Total_Amount='{row.Total_Amount}', Month='{row.Month}', Created_at={date}, Application_ID='{row.Application_ID}', Due='{row.Due}' WHERE ID={row.id}"
+                update_query = f"UPDATE {table_name} SET Name='{row.Name}', Contact='{row.Contact}', Service='{row.Service}', Service_Type='{row.Service_Type}', Govt_Fee='{row.Govt_Fee}', Service_Charge='{row.Service_Charge}', Total_Amount='{row.Total_Amount}', Month='{row.Month}', Created_at={date}, Application_ID='{row.Application_ID}', Due='{row.Due}' WHERE ID={row.id}"
 
                 # Execute update query
                 cursor.execute(update_query)
