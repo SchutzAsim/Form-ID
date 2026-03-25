@@ -14,7 +14,6 @@ config = {
     "unix_socket": None
 }
 
-
 try:
     conn = mariadb.connect(**config)
     print("Connection Successful")
