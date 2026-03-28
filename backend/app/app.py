@@ -63,7 +63,7 @@ async def post_log(row: CreateLog):
         print("Data Commited Successfully")
 
 
-@app.put("/post/update/")
+@app.put("/post/update")
 async def update_log(row: UpdateLog):
     # Fix date format for mariadb date insertion
     date = row.Created_At if row.Created_At == 'Default' else f"'{row.Created_At}'"

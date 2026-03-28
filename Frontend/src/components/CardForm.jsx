@@ -1,33 +1,50 @@
 import React from 'react'
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 import { MdModeEdit } from "react-icons/md";
 import { ContainerContext } from '../Context/context';
 
 export const CardForm = () => {
-    const { isUpdate, setupdateForm, updateForm, setShow } = useContext(ContainerContext)
-
-    const [formData, setFormData] = useState({
-        Name: '',
-        Contact: '',
-        Service: '',
-        Service_Type: '',
-        Month: '',
-        Application_ID: '',
-        Govt_Fee: '',
-        Service_Charge: '',
-        Total_Amount: '',
-        Due: ''
-    });
+    const { API_Connect, setupdateForm, updateForm, setShow, oldData, setoldData } = useContext(ContainerContext)
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
+        setoldData({ ...oldData, [name]: value });
+        // const newData = {
+        //     ...oldData, [name]: value
+        // }
+
+        // setoldData(newData)
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("Card Form Submitted: ", formData);
+
+        console.log(oldData)
+
+        try {
+            let res = await fetch(`${API_Connect}/post/update`, {
+                method: "PUT",
+                headers: {
+                    "content-type": "application/json"
+                },
+                body: JSON.stringify(oldData)
+            })
+
+            if (!res.ok) throw new Error(`Log at ID ${oldData.id} not updated!`)
+
+            let newData = await res.json()
+            setShow("home")
+            setupdateForm(false)
+
+            return newData
+
+
+        }
+        catch (err) {
+            console.error(`Error in Updating error: ${err}`)
+        }
     };
+
 
 
     if (updateForm === false) return null;
@@ -38,21 +55,22 @@ export const CardForm = () => {
             <form className="service-card update-form" onSubmit={handleSubmit}>
 
                 <h1 className='updateform-heading'>
-                    <MdModeEdit />
                     Update logs Details
+                    <MdModeEdit />
                 </h1>
                 <div className="card-header">
                     <div className="update-header form-group">
 
                         {/* Input taking the place of the h3 heading */}
-                        <span className="user-id form-group data-row">Enter ID</span>
+                        <span className="user-id form-group data-row">Update log ID</span>
                         <input
                             type="text"
-                            name="Name"
+                            name="id"
                             className="user-name card-input"
                             placeholder="Enter ID"
-                            value={formData.Name}
+                            value={oldData.id}
                             onChange={handleChange}
+                            // disabled
                             required
                         />
                     </div>
@@ -64,7 +82,7 @@ export const CardForm = () => {
                             name="Name"
                             className="user-name card-input"
                             placeholder="Enter Name"
-                            value={formData.Name}
+                            value={oldData.Name}
                             onChange={handleChange}
                             required
                         />
@@ -75,51 +93,55 @@ export const CardForm = () => {
                     <div className="details">
                         <div className="data-row form-group">
                             <span className="label">Contact</span>
-                            <input type="text" name="Contact" className="value card-input" placeholder="e.g. 9876543210" value={formData.Contact} onChange={handleChange} />
+                            <input type="text" name="Contact" className="value card-input" placeholder="e.g. 9876543210" value={oldData.Contact} onChange={handleChange} />
                         </div>
                         <div className="data-row form-group">
                             <span className="label">Service</span>
-                            <input type="text" name="Service" className="value card-input" placeholder="Service Name" value={formData.Service} onChange={handleChange} />
+                            <input type="text" name="Service" className="value card-input" placeholder="Service Name" value={oldData.Service} onChange={handleChange} />
                         </div>
                         <div className="data-row form-group">
                             <span className="label">Service Type</span>
-                            <input type="text" name="Service_Type" className="value card-input" placeholder="Type" value={formData.Service_Type} onChange={handleChange} />
+                            <input type="text" name="Service_Type" className="value card-input" placeholder="Type" value={oldData.Service_Type} onChange={handleChange} />
                         </div>
                         <div className="data-row form-group">
                             <span className="label">Month</span>
-                            <input type="text" name="Month" className="value card-input" placeholder="Month" value={formData.Month} onChange={handleChange} />
+                            <input type="text" name="Month" className="value card-input" placeholder="Month" value={oldData.Month} onChange={handleChange} />
+                        </div>
+                        <div className="data-row form-group">
+                            <span className="label">Created_At</span>
+                            <input type="text" name="Created_At" className="value card-input" placeholder="YYYY-MM-DD" value={oldData.Created_At} onChange={handleChange} />
                         </div>
                         <div className="data-row form-group">
                             <span className="label">Application ID</span>
-                            <input type="text" name="Application_ID" className="value card-input" placeholder="App ID" value={formData.Application_ID} onChange={handleChange} />
+                            <input type="text" name="Application_ID" className="value card-input" placeholder="App ID" value={oldData.Application_ID} onChange={handleChange} />
                         </div>
                     </div>
 
                     <div className="financials">
                         <div className="data-row form-group">
                             <span className="label">Govt Fee (₹)</span>
-                            <input type="number" name="Govt_Fee" className="value card-input" placeholder="0" value={formData.Govt_Fee} onChange={handleChange} />
+                            <input type="number" name="Govt_Fee" className="value card-input" placeholder="0" value={oldData.Govt_Fee} onChange={handleChange} />
                         </div>
                         <div className="data-row form-group">
                             <span className="label">Service Fee (₹)</span>
-                            <input type="number" name="Service_Charge" className="value card-input" placeholder="0" value={formData.Service_Charge} onChange={handleChange} />
+                            <input type="number" name="Service_Charge" className="value card-input" placeholder="0" value={oldData.Service_Charge} onChange={handleChange} />
                         </div>
                         <div className="data-row form-group total-row">
                             <span className="label">Total Fee</span>
-                            <input type="number" name="Total_Amount" className="value card-input" placeholder="0" value={formData.Total_Amount} onChange={handleChange} />
+                            <input type="number" name="Total_Amount" className="value card-input" placeholder="0" value={oldData.Total_Amount} onChange={handleChange} />
                         </div>
                         <div className="data-row form-group due-row">
                             <span className="label">Due Amount</span>
-                            <input type="number" name="Due" className="value card-input" placeholder="0" value={formData.Due} onChange={handleChange} />
+                            <input type="number" name="Due" className="value card-input" placeholder="0" value={oldData.Due} onChange={handleChange} />
                         </div>
                     </div>
 
                 </div>
                 {/* Inline styled button to fit the card bottom natively */}
-                <button type="submit" className='update-form-btn'>
-                    Update Card Details
+                <button type="submit" className='update-form-btn btn submit-btn'>
+                    Update Log
                 </button>
-                <div className='update-form-btn' onClick={() => (setShow("home"), setupdateForm(false))}>
+                <div className='update-form-btn cancel-btn' onClick={() => (setShow("home"), setupdateForm(false))}>
                     Cancel
                 </div>
             </form>

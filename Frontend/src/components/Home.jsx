@@ -1,10 +1,12 @@
 import React from 'react'
 import { useState, useEffect, useContext } from 'react'
 import { ContainerContext } from '../Context/context'
+import { MdModeEdit } from "react-icons/md";
+
 
 export const Home = () => {
 
-    const { Show, API_Connect, updateForm } = useContext(ContainerContext)
+    const { Show, API_Connect, setoldData, oldData, setupdateForm, setShow } = useContext(ContainerContext)
 
     const [HomeData, setHomeData] = useState([])
 
@@ -28,7 +30,7 @@ export const Home = () => {
         api_connect();
 
 
-    }, [API_Connect])
+    }, [API_Connect, Show])
 
     if (Show === "home") {
         return (
@@ -38,7 +40,12 @@ export const Home = () => {
                         <div key={row.id} className="service-card">
                             {/* Card Header: Name and ID */}
                             <div className="card-header">
-                                <h3 className="user-name">{row.Name}</h3>
+                                <div className="editBox">
+                                    <h3 className="user-name">{row.Name}</h3>
+                                    <div onClick={() => (setupdateForm(true), setShow("updateform"), setoldData(row))}>
+                                        <MdModeEdit size='25' />
+                                    </div>
+                                </div>
                                 <span className="user-id">ID: {row.id}</span>
                             </div>
 
@@ -58,7 +65,7 @@ export const Home = () => {
                                 </div>
                                 <div className="data-row">
                                     <span className="label">Created At</span>
-                                    <span className="value">{row.Created_at}</span>
+                                    <span className="value">{row.Created_At}</span>
                                 </div>
                                 <div className="data-row">
                                     <span className="label">Application ID</span>

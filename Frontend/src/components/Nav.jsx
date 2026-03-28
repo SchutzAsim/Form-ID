@@ -9,43 +9,7 @@ import { ContainerContext } from '../Context/context';
 
 export const Nav = () => {
 
-    const { API_Connect, Show, setShow, isUpdate, setisUpdate, setupdateForm } = useContext(ContainerContext)
-
-    // const handleChange = (e) => {
-    //     const { name, value } = e.target;
-    //     setFormData({
-    //         ...formData,
-    //         [name]: value
-    //     });
-    // };
-
-    // useEffect(() => {
-
-    //     try {
-    //         const isIDvalid = async (getted_ID) => {
-    //             getted_ID.preventDefault();
-
-    //             // Getting update ID response
-    //             let res = await fetch(`${API_Connect}/getUpdateID`, {
-    //                 method: "POST",
-    //                 header: {
-    //                     "content-type": "application/json"
-    //                 },
-    //                 body: JSON.stringify(getted_ID)
-    //             })
-    //             if (!res.ok) throw Error("ID for Update Not found!")
-
-    //             let update_id = await res.json();
-    //             return update_id
-    //         }
-    //     }
-    //     catch (err) {
-    //         console.error(`Error in sending ID! ${err}`)
-    //     }
-
-
-    // }, [])
-
+    const { setShow, setupdateForm, setnewForm } = useContext(ContainerContext)
 
     return (
         <>
@@ -54,12 +18,12 @@ export const Nav = () => {
                     Shop
                 </div>
                 <div className="btnholder">
-                    <div onClick={() => setShow("form")} className='add' style={{ marginRight: '0px' }}>
+                    <div onClick={() => (setShow("form"), setnewForm(true), setupdateForm(false))} className='add'>
                         <RiAddLargeLine />
                     </div>
-                    <div onClick={() => (setupdateForm(true), setShow(null))} className='add'>
+                    {/* <div onClick={() => (setupdateForm(true), setShow("updateform"))} className='add'>
                         <MdModeEdit />
-                    </div>
+                    </div> */}
                 </div>
             </nav>
             {/* <div className="getid" style={isUpdate ? { display: 'flex' } : { display: 'none' }}>

@@ -71,8 +71,8 @@ nav div {
 
 
 .add {
-    margin: 0 26px;
     transition: all 0.5s ease-in-out;
+    margin: 0 26px;
     padding: 9px 11px;
     border: 2px solid #ffffff6a;
 }
@@ -148,6 +148,7 @@ nav div {
     border: 2px solid #ffffff;
 }
 
+
 /* Header Styling */
 .card-header {
     display: flex;
@@ -156,6 +157,13 @@ nav div {
     border-bottom: 1px solid rgba(255, 255, 255, 0.15);
     padding-bottom: 12px;
     margin-bottom: 16px;
+}
+
+.editBox {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 9px;
 }
 
 .user-name {
@@ -172,8 +180,11 @@ nav div {
     width: 100%;
     text-align: center;
     margin-bottom: 2rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-    ;
+    border-bottom: 1px solid #ffffff26;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 9px;
 }
 
 .user-id {
@@ -303,6 +314,11 @@ nav div {
     align-items: center;
 }
 
+.cancel-btn:hover {
+    background-color: #ffffffd9;
+    color: #fc6868;
+}
+
 .form-group {
     display: flex;
     flex-direction: column;
@@ -368,7 +384,7 @@ nav div {
 }
 
 .submit-btn:hover {
-    background-color: rgba(255, 255, 255, 0.85);
+    background-color: #ffffffd9;
 }
 
 .submit-btn:active {
@@ -395,7 +411,6 @@ nav div {
 
 
 .update-form-btn {
-    /* width: 100%; */
     font-size: medium;
     text-align: center;
     margin-top: 16px;

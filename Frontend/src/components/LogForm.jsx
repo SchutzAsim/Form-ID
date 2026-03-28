@@ -6,7 +6,7 @@ import { ContainerContext } from '../Context/context';
 export const LogForm = () => {
 
 
-    const { API_Connect, Show, setShow } = useContext(ContainerContext);
+    const { API_Connect, Show, setShow, setnewForm, newForm } = useContext(ContainerContext);
 
 
     const [formData, setFormData] = useState({
@@ -33,7 +33,7 @@ export const LogForm = () => {
 
     const handleSubmit = async (data) => {
         data.preventDefault();
-        
+
         // API call here
         try {
             const res = await fetch(`${API_Connect}/post`, {
@@ -41,22 +41,22 @@ export const LogForm = () => {
                 headers: {
                     "content-type": "application/json"
                 },
-                
+
                 body: JSON.stringify(formData)
-                
+
             })
             if (!res.ok) throw Error("post request failed!")
-                
-                let post_res = await res.json()
-                return post_res
-            }
-            catch (err) {
-                console.error(`Error Occure in Posting Form with error code ${err}`)
-            }
-            
-        };
-        
-    if (Show === "form") {
+
+            let post_res = await res.json()
+            return post_res
+        }
+        catch (err) {
+            console.error(`Error Occure in Posting Form with error code ${err}`)
+        }
+
+    };
+
+    if (Show === "form" && newForm) {
         return (<>
             <div className={`form-page-container`}>
                 <form className="theme-form" onSubmit={handleSubmit}>
@@ -90,17 +90,17 @@ export const LogForm = () => {
                         <div className="form-group">
                             <label>Month</label>
                             {/* Could also be type="month" depending on your needs */}
-                            <input type="text" name="Month" value={formData.Month} onChange={handleChange} placeholder="e.g. Jan26" required/>
+                            <input type="text" name="Month" value={formData.Month} onChange={handleChange} placeholder="e.g. Jan26" required />
                         </div>
 
                         <div className="form-group">
                             <label>Created At</label>
-                            <input type="text" name="Created_At" value={formData.Created_At} onChange={handleChange} placeholder='e.g. YYYY-MM-DD' required/>
+                            <input type="text" name="Created_At" value={formData.Created_At} onChange={handleChange} placeholder='e.g. YYYY-MM-DD' required />
                         </div>
 
                         <div className="form-group full-width">
                             <label>Application ID</label>
-                            <input type="text" name="Application_ID" value={formData.Application_ID} onChange={handleChange} placeholder='Application no.'/>
+                            <input type="text" name="Application_ID" value={formData.Application_ID} onChange={handleChange} placeholder='Application no.' />
                         </div>
 
                         {/* Financial/Integer Inputs */}
@@ -130,7 +130,7 @@ export const LogForm = () => {
                         <button type="submit" className="submit-btn btn">Save Log</button>
                     </div>
                     <div className="form-actions btn">
-                        <button onClick={() => setShow("home")} type="submit" className="submit-btn btn">Cancel</button>
+                        <button onClick={() => (setShow("home"), setnewForm(false))} type="submit" className="submit-btn btn cancel-btn">Cancel</button>
                     </div>
                     {/* </div> */}
                 </form>
