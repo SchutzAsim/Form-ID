@@ -7,9 +7,16 @@ import { ContainerContext } from '../Context/context';
 export const LogForm = () => {
 
 
-    const { API_Connect, setShow, setnewForm } = useContext(ContainerContext);
+    const { API_Connect } = useContext(ContainerContext);
+
+    // home page pointer
+    const navigate = useNavigate();
+    const handleRoute = () => {
+        navigate(`/`)
+    }
 
 
+    // Form field data titles
     const [formData, setFormData] = useState({
         Name: '',
         Contact: '',
@@ -24,6 +31,8 @@ export const LogForm = () => {
         Due: ''
     });
 
+
+    // track form field changes
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({
@@ -32,11 +41,14 @@ export const LogForm = () => {
         });
     };
 
+
+    // handle form submition
     const handleSubmit = async (data) => {
         data.preventDefault();
 
         // API call here
         try {
+            // POST data
             const res = await fetch(`${API_Connect}/post`, {
                 method: "POST",
                 headers: {
@@ -49,6 +61,10 @@ export const LogForm = () => {
             if (!res.ok) throw Error("post request failed!")
 
             let post_res = await res.json()
+
+            // back to home page
+            handleRoute()
+
             return post_res
         }
         catch (err) {
@@ -56,12 +72,6 @@ export const LogForm = () => {
         }
 
     };
-
-
-    const navigate = useNavigate();
-    const handleRoute = () => {
-        navigate(`/`)
-    }
 
 
 

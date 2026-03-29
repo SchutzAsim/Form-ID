@@ -5,19 +5,30 @@ import { ContainerContext } from '../Context/context';
 import { useNavigate } from 'react-router-dom';
 
 export const CardForm = () => {
-    const { API_Connect, setupdateForm, oldData, setoldData } = useContext(ContainerContext)
+    const { API_Connect, oldData, setoldData } = useContext(ContainerContext)
 
+    // home page pointer
+    const navigate = useNavigate();
+    const handleRoute = () => {
+        navigate(`/`)
+    }
+
+
+    // track form field Changes
     const handleChange = (e) => {
         const { name, value } = e.target;
         setoldData({ ...oldData, [name]: value });
     };
 
+
+    // Handle form submition
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         console.log(oldData)
 
         try {
+            // post data 
             let res = await fetch(`${API_Connect}/post/update`, {
                 method: "PUT",
                 headers: {
@@ -30,6 +41,9 @@ export const CardForm = () => {
 
             let newData = await res.json()
 
+            // back to home page
+            handleRoute()
+            
             return newData
 
 
@@ -38,11 +52,6 @@ export const CardForm = () => {
             console.error(`Error in Updating error: ${err}`)
         }
     };
-
-    const navigate = useNavigate();
-    const handleRoute = () => {
-        navigate(`/`)
-    }
 
 
     return (
