@@ -259,6 +259,7 @@ nav div {
 } */
 
 .form-page-container {
+    width: -webkit-fill-available;
     margin-top: 96px;
     background-color: #0f1b26;
     min-height: 100vh;
