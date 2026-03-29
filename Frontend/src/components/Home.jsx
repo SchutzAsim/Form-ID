@@ -51,7 +51,7 @@ export const Home = () => {
                         <div className="card-header">
                             <div className="editBox">
                                 <h3 className="user-name">{row.Name}</h3>
-                                <div onClick={() => (setupdateForm(true), setShow("updateform"), setoldData(row), handleRoute())}>
+                                <div onClick={() => (setoldData(row), handleRoute())}>
                                     <MdModeEdit size='25' />
                                 </div>
                             </div>

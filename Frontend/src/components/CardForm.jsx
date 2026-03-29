@@ -29,7 +29,6 @@ export const CardForm = () => {
             if (!res.ok) throw new Error(`Log at ID ${oldData.id} not updated!`)
 
             let newData = await res.json()
-            setupdateForm(false)
 
             return newData
 

@@ -61,8 +61,6 @@ export const LogForm = () => {
     const navigate = useNavigate();
     const handleRoute = () => {
         navigate(`/`)
-        setShow("home")
-        setnewForm(false)
     }
 
 

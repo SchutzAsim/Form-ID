@@ -11,10 +11,6 @@ function App() {
 
   const API_Connect = import.meta.env.VITE_API;
 
-  const [Show, setShow] = useState("home")
-  const [isUpdate, setisUpdate] = useState(false)
-  const [newForm, setnewForm] = useState(false)
-  const [updateForm, setupdateForm] = useState(false)
   const [oldData, setoldData] = useState({ id: "undefine" })
 
 
@@ -25,14 +21,6 @@ function App() {
         value={
           {
             API_Connect,
-            Show,
-            setShow,
-            isUpdate,
-            setisUpdate,
-            newForm,
-            setnewForm,
-            updateForm,
-            setupdateForm,
             oldData,
             setoldData
           }
