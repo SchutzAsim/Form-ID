@@ -2,9 +2,10 @@ import React from 'react'
 import { useContext } from 'react';
 import { MdModeEdit } from "react-icons/md";
 import { ContainerContext } from '../Context/context';
+import { useNavigate } from 'react-router-dom';
 
 export const CardForm = () => {
-    const { API_Connect, setupdateForm, updateForm, setShow, oldData, setoldData } = useContext(ContainerContext)
+    const { API_Connect, setupdateForm, oldData, setoldData } = useContext(ContainerContext)
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -28,7 +29,6 @@ export const CardForm = () => {
             if (!res.ok) throw new Error(`Log at ID ${oldData.id} not updated!`)
 
             let newData = await res.json()
-            setShow("home")
             setupdateForm(false)
 
             return newData
@@ -40,9 +40,11 @@ export const CardForm = () => {
         }
     };
 
+    const navigate = useNavigate();
+    const handleRoute = () => {
+        navigate(`/`)
+    }
 
-
-    if (updateForm === false) return null;
 
     return (
         <>
@@ -65,7 +67,7 @@ export const CardForm = () => {
                             placeholder="Enter ID"
                             value={oldData.id}
                             onChange={handleChange}
-                            // disabled
+                            disabled
                             required
                         />
                     </div>
@@ -136,7 +138,7 @@ export const CardForm = () => {
                 <button type="submit" className='update-form-btn btn submit-btn'>
                     Update Log
                 </button>
-                <div className='update-form-btn cancel-btn' onClick={() => (setShow("home"), setupdateForm(false))}>
+                <div className='update-form-btn cancel-btn' onClick={() => (handleRoute())}>
                     Cancel
                 </div>
             </form>

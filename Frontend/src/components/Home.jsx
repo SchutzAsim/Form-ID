@@ -1,14 +1,18 @@
 import React from 'react'
 import { useState, useEffect, useContext } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom';
 import { ContainerContext } from '../Context/context'
 import { MdModeEdit } from "react-icons/md";
 
 
 export const Home = () => {
 
-    const { Show, API_Connect, setoldData, setupdateForm, setShow } = useContext(ContainerContext)
+    const { API_Connect, setoldData, setupdateForm, setShow } = useContext(ContainerContext)
+
+    const url = useLocation();
 
     const [HomeData, setHomeData] = useState([])
+
 
     HomeData.reverse()
 
@@ -30,74 +34,77 @@ export const Home = () => {
         api_connect();
 
 
-    }, [API_Connect, Show])
+    }, [API_Connect, url.pathname])
 
-    if (Show === "home") {
-        return (
-            <>
-                <div className={`card-container`}>
-                    {HomeData.map((row) => (
-                        <div key={row.id} className="service-card">
-                            {/* Card Header: Name and ID */}
-                            <div className="card-header">
-                                <div className="editBox">
-                                    <h3 className="user-name">{row.Name}</h3>
-                                    <div onClick={() => (setupdateForm(true), setShow("updateform"), setoldData(row))}>
-                                        <MdModeEdit size='25' />
-                                    </div>
+
+    const navigate = useNavigate();
+    const handleRoute = () => {
+        navigate(`/update/log`)
+    }
+
+    return (
+        <>
+            <div className={`card-container`}>
+                {HomeData.map((row) => (
+                    <div key={row.id} className="service-card">
+                        {/* Card Header: Name and ID */}
+                        <div className="card-header">
+                            <div className="editBox">
+                                <h3 className="user-name">{row.Name}</h3>
+                                <div onClick={() => (setupdateForm(true), setShow("updateform"), setoldData(row), handleRoute())}>
+                                    <MdModeEdit size='25' />
                                 </div>
-                                <span className="user-id">ID: {row.id}</span>
+                            </div>
+                            <span className="user-id">ID: {row.id}</span>
+                        </div>
+
+                        {/* Card Body: All other details */}
+                        <div className="card-body">
+                            <div className="data-row">
+                                <span className="label">Contact</span>
+                                <span className="value">{row.Contact}</span>
+                            </div>
+                            <div className="data-row">
+                                <span className="label">Service</span>
+                                <span className="value">{row.Service}</span>
+                            </div>
+                            <div className="data-row">
+                                <span className="label">Service Type</span>
+                                <span className="value">{row.Service_Type}</span>
+                            </div>
+                            <div className="data-row">
+                                <span className="label">Created At</span>
+                                <span className="value">{row.Created_At}</span>
+                            </div>
+                            <div className="data-row">
+                                <span className="label">Application ID</span>
+                                <span className="value">{row.Application_ID}</span>
                             </div>
 
-                            {/* Card Body: All other details */}
-                            <div className="card-body">
+                            {/* Financials grouped together visually */}
+                            <div className="financials">
                                 <div className="data-row">
-                                    <span className="label">Contact</span>
-                                    <span className="value">{row.Contact}</span>
+                                    <span className="label">Govt Fee</span>
+                                    <span className="value">₹{row.Govt_Fee}</span>
                                 </div>
                                 <div className="data-row">
-                                    <span className="label">Service</span>
-                                    <span className="value">{row.Service}</span>
+                                    <span className="label">Service Fee</span>
+                                    <span className="value">₹{row.Service_Charge}</span>
                                 </div>
-                                <div className="data-row">
-                                    <span className="label">Service Type</span>
-                                    <span className="value">{row.Service_Type}</span>
+                                <div className="data-row total-row">
+                                    <span className="label">Total Fee</span>
+                                    <span className="value">₹{row.Total_Amount}</span>
                                 </div>
-                                <div className="data-row">
-                                    <span className="label">Created At</span>
-                                    <span className="value">{row.Created_At}</span>
-                                </div>
-                                <div className="data-row">
-                                    <span className="label">Application ID</span>
-                                    <span className="value">{row.Application_ID}</span>
-                                </div>
-
-                                {/* Financials grouped together visually */}
-                                <div className="financials">
-                                    <div className="data-row">
-                                        <span className="label">Govt Fee</span>
-                                        <span className="value">₹{row.Govt_Fee}</span>
-                                    </div>
-                                    <div className="data-row">
-                                        <span className="label">Service Fee</span>
-                                        <span className="value">₹{row.Service_Charge}</span>
-                                    </div>
-                                    <div className="data-row total-row">
-                                        <span className="label">Total Fee</span>
-                                        <span className="value">₹{row.Total_Amount}</span>
-                                    </div>
-                                    <div className="data-row due-row">
-                                        <span className="label">Due Amount</span>
-                                        <span className="value">₹{row.Due}</span>
-                                    </div>
+                                <div className="data-row due-row">
+                                    <span className="label">Due Amount</span>
+                                    <span className="value">₹{row.Due}</span>
                                 </div>
                             </div>
                         </div>
-                    ))}
-                </div>
-            </>
-        )
-    }
+                    </div>
+                ))}
+            </div>
+        </>
+    )
 }
-
 
