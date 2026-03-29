@@ -15,13 +15,13 @@ export const LogForm = () => {
         Contact: '',
         Service: '',
         Service_Type: '',
-        Govt_Fee: 0,
-        Service_Charge: 0,
-        Total_Amount: 0,
+        Govt_Fee: '',
+        Service_Charge: '',
+        Total_Amount: '',
         Month: '',
         Created_At: 'Default',
         Application_ID: 'NA',
-        Due: 0
+        Due: ''
     });
 
     const handleChange = (e) => {
@@ -114,22 +114,22 @@ export const LogForm = () => {
                     {/* Financial/Integer Inputs */}
                     <div className="form-group">
                         <label>Govt Fee</label>
-                        <input type="number" name="Govt_Fee" value={formData.Govt_Fee} onChange={handleChange} />
+                        <input type="number" name="Govt_Fee" value={formData.Govt_Fee} onChange={handleChange} placeholder='0' />
                     </div>
 
                     <div className="form-group">
                         <label>Service Charge</label>
-                        <input type="number" name="Service_Charge" value={formData.Service_Charge} onChange={handleChange} />
+                        <input type="number" name="Service_Charge" value={formData.Service_Charge} onChange={handleChange} placeholder='0' />
                     </div>
 
                     <div className="form-group">
                         <label>Total Amount</label>
-                        <input type="number" name="Total_Amount" value={formData.Total_Amount} onChange={handleChange} />
+                        <input type="number" name="Total_Amount" value={formData.Total_Amount} onChange={handleChange} placeholder='0' />
                     </div>
 
-                    <div className="form-group">
+                    <div className="form-group due-row">
                         <label>Due</label>
-                        <input type="number" name="Due" value={formData.Due} onChange={handleChange} />
+                        <input type="number" name="Due" value={formData.Due} onChange={handleChange} placeholder='0' className='value' />
                     </div>
                 </div>
 
