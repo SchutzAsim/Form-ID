@@ -15,9 +15,6 @@ export const Home = () => {
     let showonPage = url.pathname.startsWith("/post/search/") ? searchData : HomeData
 
 
-
-    HomeData.reverse()
-
     useEffect(() => {
         const api_connect = async () => {
             try {

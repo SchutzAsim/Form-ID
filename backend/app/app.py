@@ -47,7 +47,7 @@ async def get_logs():
     data = cursor.fetchall()
     conn.commit()
     result = home_Entitys(data)
-    return JSONResponse(content=result, status_code=200)
+    return JSONResponse(content=result[::-1], status_code=200)
 
 
 @app.post("/post")
@@ -165,6 +165,6 @@ async def search_row(query):
 
         filter_data = search_engine.search(query)
         result = home_Entitys(filter_data)
-        return JSONResponse(content=result, status_code=200)
+        return JSONResponse(content=result[::-1], status_code=200)
     except:
         raise HTTPException(detail="Not Found", status_code=404)
