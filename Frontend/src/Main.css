@@ -42,6 +42,23 @@ nav {
     z-index: 200;
 }
 
+
+.search-bar{
+    width: 100%;
+    align-items: center;
+}
+
+.search-area {
+    width: 30%;
+    text-align: center;
+}
+
+.search-area:focus{
+    text-align: start;
+    width: 60%;
+}
+
+
 #logo {
     margin: 0 26px;
     font-family: 'Princess Sofia';
@@ -259,9 +276,10 @@ nav div {
 } */
 
 .form-page-container {
+    width: 100%;
+    min-height: 100vh;
     margin-top: 96px;
     background-color: #0f1b26;
-    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;

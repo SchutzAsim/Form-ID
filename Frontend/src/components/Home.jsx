@@ -1,5 +1,5 @@
 import React from 'react'
-import { useState, useEffect, useContext } from 'react'
+import { useEffect, useContext, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom';
 import { ContainerContext } from '../Context/context'
 import { MdModeEdit } from "react-icons/md";
@@ -7,11 +7,13 @@ import { MdModeEdit } from "react-icons/md";
 
 export const Home = () => {
 
-    const { API_Connect, setoldData, setupdateForm, setShow } = useContext(ContainerContext)
+    const { API_Connect, setoldData, searchData } = useContext(ContainerContext)
 
     const url = useLocation();
 
     const [HomeData, setHomeData] = useState([])
+    let showonPage = url.pathname.startsWith("/post/search/") ? searchData : HomeData
+
 
 
     HomeData.reverse()
@@ -30,12 +32,10 @@ export const Home = () => {
             }
         }
 
-
         api_connect();
 
 
     }, [API_Connect, url.pathname])
-
 
     const navigate = useNavigate();
     const handleRoute = () => {
@@ -45,7 +45,7 @@ export const Home = () => {
     return (
         <>
             <div className={`card-container`}>
-                {HomeData.map((row) => (
+                { showonPage.map((row) => (
                     <div key={row.id} className="service-card">
                         {/* Card Header: Name and ID */}
                         <div className="card-header">

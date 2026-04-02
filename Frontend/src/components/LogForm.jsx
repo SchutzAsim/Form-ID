@@ -7,7 +7,7 @@ import { ContainerContext } from '../Context/context';
 export const LogForm = () => {
 
 
-    const { API_Connect, setShow, setnewForm } = useContext(ContainerContext);
+    const { API_Connect } = useContext(ContainerContext);
 
 
     const [formData, setFormData] = useState({

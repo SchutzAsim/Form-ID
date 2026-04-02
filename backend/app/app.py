@@ -1,4 +1,6 @@
 import os
+from getopt import error
+
 import mariadb
 from fastapi import FastAPI, HTTPException
 from  fastapi.middleware.cors import CORSMiddleware
@@ -144,21 +146,25 @@ async def update_due(due_id: UpdateID):
         raise HTTPException(detail=f"Enter ID should be greater than 0", status_code=400)
 
 
-@app.post("/search/post")
-async def search_row(query: str):
-    search_engine = SimpleSearchIndex()
-    # fetch all rows
-    select_query = f"SELECT * FROM {table_name}"
-    cursor.execute(select_query)
-    data = cursor.fetchall()
-    conn.commit()
-    rows = home_Entitys(data)
+@app.get("/search/post/{query}")
+async def search_row(query):
+    print(query)
+    try:
+        search_engine = SimpleSearchIndex()
+        # fetch all rows
+        select_query = f"SELECT * FROM {table_name}"
+        cursor.execute(select_query)
+        data = cursor.fetchall()
+        conn.commit()
+        rows = home_Entitys(data)
 
-    searchTitles = ["Name", "Contact", "Application_ID", "Service", "Service_Type"]
+        searchTitles = ["Name", "Contact", "Application_ID", "Service", "Service_Type"]
 
-    for row in rows:
-        search_engine.add_to_index(searchTitles, row)
+        for row in rows:
+            search_engine.add_to_index(searchTitles, row)
 
-    result = search_engine.search(query)
-    print(result)
-    return JSONResponse(content=f"{result}", status_code=200)
+        filter_data = search_engine.search(query)
+        result = home_Entitys(filter_data)
+        return JSONResponse(content=result, status_code=200)
+    except:
+        raise HTTPException(detail="Not Found", status_code=404)
