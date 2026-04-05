@@ -37,7 +37,7 @@ function App() {
         <div className={`container`}>
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="post/search/:query" element={<Home />} />
+            <Route path="/post/search/:query" element={<Home />} />
             <Route path="/new/post" element={<LogForm />} />
             <Route path={`/update/log`} element={<CardForm />} />
           </Routes>
