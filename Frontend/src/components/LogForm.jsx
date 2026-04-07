@@ -9,6 +9,11 @@ export const LogForm = () => {
 
     const { API_Connect } = useContext(ContainerContext);
 
+    const navigation = useNavigate();
+    const handleRoute = () => {
+        navigation('/')
+    }
+
 
     // Form field data titles
     const [formData, setFormData] = useState({

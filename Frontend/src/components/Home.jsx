@@ -42,7 +42,7 @@ export const Home = () => {
     return (
         <>
             <div className={`card-container`}>
-                { showonPage.map((row) => (
+                {showonPage.map((row) => (
                     <div key={row.id} className="service-card">
                         {/* Card Header: Name and ID */}
                         <div className="card-header">
@@ -59,7 +59,7 @@ export const Home = () => {
                         <div className="card-body">
                             <div className="data-row">
                                 <span className="label">Contact</span>
-                                <span className="value">{row.Contact}</span>
+                                <a className="value" href={`tel:${row.Contact}`}>{row.Contact}</a>
                             </div>
                             <div className="data-row">
                                 <span className="label">Service</span>
