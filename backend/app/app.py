@@ -1,8 +1,7 @@
 import os
-from getopt import error
-
+from typing import Annotated
 import mariadb
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends
 from  fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from dotenv import load_dotenv
@@ -10,6 +9,7 @@ from app.databases.db import cursor, conn
 from app.model.model import home_Entitys
 from app.Search.search import SimpleSearchIndex
 from app.schema.schema import CreateLog, UpdateLog, UpdateID
+from app.auth import auth_router, get_current_active_user, User
 
 load_dotenv()
 
@@ -19,6 +19,10 @@ local_connect = os.getenv("local_connect")
 global_connect = os.getenv("global_connect")
 
 app = FastAPI()
+app.include_router(auth_router)
+
+# Current Active User Dependency for methods
+current_active_user = Annotated[User, Depends(get_current_active_user)]
 
 # origins
 origins = [
@@ -40,7 +44,7 @@ app.add_middleware(
 table_name = 'logs' if int(os.getenv("SERVER_PORT")) == 8181 else 'test_table'
 
 @app.get("/home")
-async def get_logs():
+async def get_logs(current_user: current_active_user):
     # fetch all rows
     select_query = f"SELECT * FROM {table_name}"
     cursor.execute(select_query)
@@ -51,7 +55,7 @@ async def get_logs():
 
 
 @app.post("/post")
-async def post_log(row: CreateLog):
+async def post_log(row: CreateLog, current_user: current_active_user):
     # Fix date format for mariadb date insertion
     date = row.Created_At.title() if row.Created_At.title() == 'Default' else f"'{row.Created_At}'"
     try:
@@ -72,7 +76,7 @@ async def post_log(row: CreateLog):
 
 
 @app.put("/post/update")
-async def update_log(row: UpdateLog):
+async def update_log(row: UpdateLog, current_user: current_active_user):
     # Fix date format for mariadb date insertion
     date = row.Created_At.capitalize() if row.Created_At.capitalize() == 'Default' else f"'{row.Created_At}'"
 
@@ -110,7 +114,7 @@ async def update_log(row: UpdateLog):
 
 
 @app.put("/post/UpdateDue")
-async def update_due(due_id: UpdateID):
+async def update_due(due_id: UpdateID, current_user: current_active_user):
     # Store Due column ID
     find_id = due_id.id
 
@@ -147,7 +151,7 @@ async def update_due(due_id: UpdateID):
 
 
 @app.get("/search/post/{query}")
-async def search_row(query):
+async def search_row(query, current_user: current_active_user):
     print(query)
     try:
         search_engine = SimpleSearchIndex()

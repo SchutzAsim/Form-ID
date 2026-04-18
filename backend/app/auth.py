@@ -2,12 +2,18 @@ from datetime import datetime, timedelta, timezone
 from typing import Annotated
 import jwt
 import os
+from fastapi import APIRouter
 from fastapi import Depends, HTTPException, FastAPI, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jwt.exceptions import InvalidTokenError
 from pwdlib import PasswordHash
-from pydantic import BaseModel
 from dotenv import load_dotenv
+from app.schema.schema import Token, TokenData, User
+
+
+# Create an Authentication Router
+auth_router = APIRouter()
+
 
 # Load Secret Key
 load_dotenv()
@@ -17,25 +23,6 @@ ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
 
 password_hashed = PasswordHash.recommended()
 DUMMY_HASHED = password_hashed.hash("secret")
-
-
-class Token(BaseModel):
-    access_token: str
-    token_type: str
-
-class TokenData(BaseModel):
-    username: str | None = None
-
-
-class User(BaseModel):
-    username: str
-    hashed_password: str | None = None
-    email: str | None = None
-    disabled: bool | None = None
-
-
-def fake_hashed_password(password: str):
-    return "schutz" + password
 
 
 class UserInDB(User):
@@ -51,7 +38,7 @@ fake_users_db = {
     }
 }
 
-app = FastAPI()
+# app = FastAPI()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
@@ -117,7 +104,7 @@ async def get_current_active_user(current_user: Annotated[User, Depends(get_curr
     return current_user
 
 
-@app.post("/token")
+@auth_router.post("/token")
 async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> Token:
     user = authenticate_user(fake_users_db, form_data.username, form_data.password)
     if not user:
@@ -136,6 +123,6 @@ async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> T
 
 
 
-@app.get("/user/me")
+@auth_router.get("/user/me")
 async def read_user(current_user: Annotated[User, Depends(get_current_active_user)]):
     return current_user
