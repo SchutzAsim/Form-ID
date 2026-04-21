@@ -10,9 +10,14 @@ class TokenData(BaseModel):
     username: str | None = None
 
 
+class NewUser(BaseModel):
+    username: str
+    hashed_password: str
+    email: str | None = None
+    disabled: bool | None = None
+
 class User(BaseModel):
     username: str
-    hashed_password: str | None = None
     email: str | None = None
     disabled: bool | None = None
 

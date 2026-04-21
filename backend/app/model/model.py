@@ -11,7 +11,6 @@ def AllUsersEntity(item) -> dict:
 
 def AllUsersEntitys(items) -> list:
     return [AllUsersEntity(item) for item in items]
-    # print(items)
 
 
 def home_Entity(item) -> dict:

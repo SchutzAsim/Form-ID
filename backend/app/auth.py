@@ -12,7 +12,7 @@ from pwdlib import PasswordHash
 from dotenv import load_dotenv
 from starlette.responses import JSONResponse
 from app.model.model import AllUsersEntity, AllUsersEntitys
-from app.schema.schema import Token, TokenData, User
+from app.schema.schema import Token, TokenData, User, NewUser
 from app.databases.db import conn, cursor
 
 # DataBase Table Selection
@@ -25,16 +25,16 @@ ALGORITHM = os.getenv("ALOGRITHM")
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
 
 
-# Create an Authentication Router
+# Authentication Router
 auth_router = APIRouter()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
 # Hashed Password Instance
 password_hashed = PasswordHash.recommended()
-DUMMY_HASHED = password_hashed.hash('secret')
 
 
+# Store Requested User with password
 class UserInDB(User):
     hashed_password: str
 
@@ -47,7 +47,7 @@ def PasswordHashing(password):
 
 
 # All Users Dict list
-def user_db():
+def UserManager():
     # Select Query
     get_user_query = f"SELECT * FROM {user_table}"
 
@@ -55,44 +55,46 @@ def user_db():
     cursor.execute(get_user_query)
     userdata = cursor.fetchall()
 
+    # commit data
+    conn.commit()
+
     # list of all users
     AllUsers = AllUsersEntitys(userdata)
-    return AllUsers
+
+    # Dict of user by username
+    AllUsersDict = {}
+    for one in AllUsers:
+        AllUsersDict.update({one["username"]: one})
+    print(AllUsersDict)
+    return AllUsersDict
 
 
-fake_users_db = {
-    "alice": {
-        "username": "alice",
-        "email": "alice@gmail.com",
-        "hashed_password": DUMMY_HASHED,
-        "disabled": False
-    }
-}
-
-
+# Varify user password
 def verify_password(plain_password, hashed_password):
     return password_hashed.verify(plain_password, hashed_password)
 
+# convert user password to hashed password for verification
 def get_password_hashed(password):
     return password_hashed.hash(password)
 
-
+# Get Correct User if Available in UserData
 def fake_user(db, username: str):
     if username in db:
         user_dict = db[username]
         return UserInDB(**user_dict)
 
-
+# Decode user's given token
 def fake_decode_token(token):
-    user = fake_user(fake_users_db, token)
+    user = fake_user(UserManager(), token)
     return user
 
 
+# Authenticate User Credentials
 def authenticate_user(fake_db, username: str, password: str):
     user = fake_user(fake_db, username)
 
     if not user:
-        verify_password(password, user.hashed_password)
+        # verify_password(password, user.hashed_password)
         return False
     if not verify_password(password, user.hashed_password):
         return False
@@ -110,6 +112,7 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     encode_jwt = jwt.encode(to_encode, SECRET_KEY, ALGORITHM)
     return encode_jwt
 
+# Return Requested User if Authorized
 async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
        Credentials_exception = HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -124,11 +127,12 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
            token_data = TokenData(username=username)
        except InvalidTokenError:
            raise Credentials_exception
-       user = fake_user(fake_users_db, username=token_data.username)
+       user = fake_user(UserManager(), username=token_data.username)
        if user is None:
            raise Credentials_exception
        return user
 
+# Return Current User Active or Not
 async def get_current_active_user(current_user: Annotated[User, Depends(get_current_user)]):
     if current_user.disabled:
         raise HTTPException(status_code=400, detail="Inactive User")
@@ -136,7 +140,10 @@ async def get_current_active_user(current_user: Annotated[User, Depends(get_curr
 
 
 @auth_router.post('/new/user')
-async def NewUser(FormData: User):
+async def NewUser(FormData: NewUser):
+    if FormData.username in UserManager():
+        raise HTTPException(status_code=409, detail="Pick Another Username")
+
     try:
         # Making Hashed Password
         HashedPassword = PasswordHashing(FormData.hashed_password)
@@ -153,12 +160,13 @@ async def NewUser(FormData: User):
 
     finally:
         conn.commit()
+        UserManager()
 
 
 @auth_router.get("/all/users")
 async def AllUsers(current_user: Annotated[User, Depends(get_current_active_user)]):
     try:
-        allusers = user_db()
+        allusers = UserManager()
         return JSONResponse(status_code=200, content=allusers)
 
     except mariadb.Error as e:
@@ -169,7 +177,7 @@ async def AllUsers(current_user: Annotated[User, Depends(get_current_active_user
 
 @auth_router.post("/token")
 async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> Token:
-    user = authenticate_user(fake_users_db, form_data.username, form_data.password)
+    user = authenticate_user(UserManager(), form_data.username, form_data.password)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
