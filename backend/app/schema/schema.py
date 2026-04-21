@@ -1,7 +1,28 @@
 from pydantic import BaseModel
-from typing import Optional
 
 
+# Authenticated User Schema
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class TokenData(BaseModel):
+    username: str | None = None
+
+
+class NewUser(BaseModel):
+    username: str
+    hashed_password: str
+    email: str | None = None
+    disabled: bool | None = None
+
+class User(BaseModel):
+    username: str
+    email: str | None = None
+    disabled: bool | None = None
+
+
+# Data Schema
 class CreateLog(BaseModel):
     Name: str
     Contact: str

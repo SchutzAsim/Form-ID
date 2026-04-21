@@ -5,7 +5,7 @@ import { ContainerContext } from '../Context/context';
 import { useNavigate } from 'react-router-dom';
 
 export const CardForm = () => {
-    const { API_Connect, oldData, setoldData } = useContext(ContainerContext)
+    const { API_Connect, oldData, setoldData, access_token } = useContext(ContainerContext)
 
     // home page pointer
     const navigate = useNavigate();
@@ -32,7 +32,8 @@ export const CardForm = () => {
             let res = await fetch(`${API_Connect}/post/update`, {
                 method: "PUT",
                 headers: {
-                    "content-type": "application/json"
+                    'Authorization': `Bearer ${access_token}`,
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(oldData)
             })
@@ -43,7 +44,7 @@ export const CardForm = () => {
 
             // back to home page
             handleRoute()
-            
+
             return newData
 
 

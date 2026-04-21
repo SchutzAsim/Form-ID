@@ -1,3 +1,18 @@
+def AllUsersEntity(item) -> dict:
+    return {
+        "user_id": str(item["user_id"]),
+        "username": str(item["username"]),
+        "hashed_password": str(item["hashed_password"]),
+        "email": str(item["email"]),
+        "disabled": str(item["disabled"]),
+        "created_at": str(item["created_at"])
+    }
+
+
+def AllUsersEntitys(items) -> list:
+    return [AllUsersEntity(item) for item in items]
+
+
 def home_Entity(item) -> dict:
     return {
         "id": str(item["id"]),

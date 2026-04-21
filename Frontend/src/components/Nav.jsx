@@ -7,7 +7,7 @@ import { ContainerContext } from '../Context/context';
 
 
 export const Nav = () => {
-    const { API_Connect, searchPara, setsearchPara, setsearchData } = useContext(ContainerContext)
+    const { API_Connect, searchPara, setsearchPara, setsearchData, authorized, access_token } = useContext(ContainerContext)
 
     const navigate = useNavigate();
     const url = useLocation();
@@ -26,18 +26,13 @@ export const Nav = () => {
 
 
     const handleRoute = () => {
-        navigate("/new/post")
+        if (authorized) {
+            navigate("/new/post")
+        }
+        else {
+            navigate("/login")
+        }
     }
-
-
-    // select search page
-    // let searchPage
-    // if (searchPara.query === '') {
-    //     searchPage = searchTerm.at(-1)
-    // }
-    // else if (searchPara.query !== '') {
-    //     searchPage = searchPara.query.split(' ')
-    // }
 
 
     let searchPathWords = searchPara.query.split(' ')
@@ -55,7 +50,8 @@ export const Nav = () => {
             const res = await fetch(`${API_Connect}/search/post/${searchPara.query}`, {
                 method: "GET",
                 headers: {
-                    "content-type": "application/json"
+                    'Authorization': `Bearer ${access_token}`,
+                    'Content-Type': 'application/json'
                 }
             })
 
@@ -81,7 +77,8 @@ export const Nav = () => {
                 const res = await fetch(`${API_Connect}/search/post/${searchTerm.at(-1)}`, {
                     method: "GET",
                     headers: {
-                        "content-type": "application/json"
+                        'Authorization': `Bearer ${access_token}`,
+                        'Content-Type': 'application/json'
                     }
                 })
 
@@ -111,7 +108,7 @@ export const Nav = () => {
     return (
         <>
             <nav>
-                <div id='logo' onClick={() => navigate("/")}>
+                <div id='logo' onClick={() => authorized ? navigate("/") : navigate('/login')}>
                     Shop
                 </div>
                 <form className="search-bar form-group" onSubmit={handleSearch}>
