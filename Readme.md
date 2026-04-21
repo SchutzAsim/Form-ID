@@ -130,4 +130,4 @@ npm run dev
 
 This project will be open-sourced under a permissive license soon.
 You are free to use this repo for learning & personal use.
-For any query, please connect on [eshopmine@gmail.com] for permissions.
+For any query, please connect on [asimsaifioffical12@gmail.com] for permissions.
