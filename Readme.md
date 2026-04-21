@@ -126,7 +126,7 @@ npm run dev
 
 ## License
 
-🚧 **License Pending** 🚧
+🚧 **License Adding Soon** 🚧
 
 This project will be open-sourced under a permissive license soon.
 You are free to use this repo for learning & personal use.
