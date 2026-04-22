@@ -1,6 +1,7 @@
 import React, { useContext } from 'react'
 import { useState, useEffect } from 'react';
 import { RiAddLargeLine } from "react-icons/ri";
+import { IoLogOutSharp } from "react-icons/io5";
 import { useNavigate, useLocation } from 'react-router-dom';
 import { ContainerContext } from '../Context/context';
 
@@ -105,6 +106,15 @@ export const Nav = () => {
     }, [])
 
 
+    const handlelogout = (e) => {
+        e.preventDefault()
+        window.localStorage.removeItem('token')
+        console.log(access_token)
+        window.location.reload('/')
+    }
+    
+
+
     return (
         <>
             <nav>
@@ -117,6 +127,9 @@ export const Nav = () => {
                 <div className="btnholder">
                     <div onClick={() => (handleRoute())} className='add'>
                         <RiAddLargeLine />
+                    </div>
+                    <div onClick={handlelogout} className='add logout'>
+                        <IoLogOutSharp />
                     </div>
                 </div>
             </nav>

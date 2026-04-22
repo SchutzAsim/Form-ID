@@ -12,8 +12,6 @@ function App() {
 
   const API_Connect = import.meta.env.VITE_API;
   const access_token = localStorage.getItem('token')
-  // const login_state = 'authorized'
-  // let authorized = localStorage.getItem(login_state)
 
   const [oldData, setoldData] = useState({ id: "undefine" })
 
