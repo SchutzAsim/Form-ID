@@ -6,9 +6,9 @@ from  fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from dotenv import load_dotenv
 from app.databases.db import cursor, conn
-from app.model.model import home_Entitys
+from app.model.model import home_entitys
 from app.Search.search import SimpleSearchIndex
-from app.schema.schema import CreateLog, UpdateLog, UpdateID
+from app.schema.schema import CreateLog, UpdateLog, UpdateDue
 from app.auth import auth_router, get_current_active_user, User
 
 load_dotenv()
@@ -52,7 +52,7 @@ async def get_logs(current_user: current_active_user):
     cursor.execute(select_query)
     data = cursor.fetchall()
     conn.commit()
-    result = home_Entitys(data)
+    result = home_entitys(data)
     return JSONResponse(content=result[::-1], status_code=200)
 
 
@@ -114,7 +114,7 @@ async def update_log(row: UpdateLog, current_user: current_active_user):
 
 
 @app.put("/post/UpdateDue")
-async def update_due(due_id: UpdateID, current_user: current_active_user):
+async def update_due(due_id: UpdateDue, current_user: current_active_user):
     # Store Due column ID
     find_id = due_id.id
 
@@ -158,7 +158,7 @@ async def search_row(query, current_user: current_active_user):
         cursor.execute(select_query)
         data = cursor.fetchall()
         conn.commit()
-        rows = home_Entitys(data)
+        rows = home_entitys(data)
 
         searchTitles = ["Name", "Contact", "Application_ID", "Service", "Service_Type"]
 
@@ -166,7 +166,7 @@ async def search_row(query, current_user: current_active_user):
             search_engine.add_to_index(searchTitles, row)
 
         filter_data = search_engine.search(query)
-        result = home_Entitys(filter_data)
+        result = home_entitys(filter_data)
         return JSONResponse(content=result[::-1], status_code=200)
     except:
         raise HTTPException(detail="Not Found", status_code=404)

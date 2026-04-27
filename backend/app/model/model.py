@@ -1,4 +1,5 @@
-def AllUsersEntity(item) -> dict:
+# User's DataBase table model
+def all_users_entity(item) -> dict:
     return {
         "user_id": str(item["user_id"]),
         "username": str(item["username"]),
@@ -8,12 +9,12 @@ def AllUsersEntity(item) -> dict:
         "created_at": str(item["created_at"])
     }
 
+def all_users_entitys(items) -> list:
+    return [all_users_entity(item) for item in items]
 
-def AllUsersEntitys(items) -> list:
-    return [AllUsersEntity(item) for item in items]
 
-
-def home_Entity(item) -> dict:
+# Log's DataBase table model
+def home_entity(item) -> dict:
     return {
         "id": str(item["id"]),
         "Name": item["Name"],
@@ -29,6 +30,5 @@ def home_Entity(item) -> dict:
         "Due": item["Due"]
     }
 
-
-def home_Entitys(items) -> list:
-    return [home_Entity(item) for item in items]
+def home_entitys(items) -> list:
+    return [home_entity(item) for item in items]

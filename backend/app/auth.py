@@ -10,9 +10,8 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jwt.exceptions import InvalidTokenError
 from pwdlib import PasswordHash
 from dotenv import load_dotenv
-from starlette.responses import JSONResponse
-from app.model.model import AllUsersEntity, AllUsersEntitys
-from app.schema.schema import Token, TokenData, User, NewUser
+from app.model.model import all_users_entitys
+from app.schema.schema import Token, TokenData, User, NewUser, LoginRequest
 from app.databases.db import conn, cursor
 
 # DataBase Table Selection
@@ -40,14 +39,14 @@ class UserInDB(User):
 
 
 # Password Hashing for DB
-def PasswordHashing(password):
-    PasswordHashedKey = password_hashed.hash(password)
-    return PasswordHashedKey
+def password_hashing(password):
+    Password_Hashed_Key = password_hashed.hash(password)
+    return Password_Hashed_Key
 
 
 
 # All Users Dict list
-def UserManager():
+def user_manager():
     # Select Query
     get_user_query = f"SELECT * FROM {user_table}"
 
@@ -59,13 +58,13 @@ def UserManager():
     conn.commit()
 
     # list of all users
-    AllUsers = AllUsersEntitys(userdata)
+    All_Users = all_users_entitys(userdata)
 
     # Dict of user by username
-    AllUsersDict = {}
-    for one in AllUsers:
-        AllUsersDict.update({one["username"]: one})
-    return AllUsersDict
+    All_Users_Dict = {}
+    for one in All_Users:
+        All_Users_Dict.update({one["username"]: one})
+    return All_Users_Dict
 
 
 # Varify user password
@@ -77,26 +76,24 @@ def get_password_hashed(password):
     return password_hashed.hash(password)
 
 # Get Correct User if Available in UserData
-def register_user(db, username: str):
-    if username in db:
-        user_dict = db[username]
+def registered_user(user_db, username: str):
+    if username in user_db:
+        user_dict = user_db[username]
         return UserInDB(**user_dict)
-
-# Decode user's given token
-def register_decode_token(token):
-    user = register_user(UserManager(), token)
-    return user
+    return False
 
 
 # Authenticate User Credentials
-def authenticate_user(fake_db, username: str, password: str):
-    user = register_user(fake_db, username)
-
+def authenticate_user(user_db, username: str, password: str):
+    # Search user on DataBase
+    user = registered_user(user_db, username)
     if not user:
-        # verify_password(password, user.hashed_password)
+        # If user not exist
         return False
     if not verify_password(password, user.hashed_password):
+        # if users password not matched
         return False
+    # If an authentic user
     return user
 
 
@@ -113,7 +110,7 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
 
 # Return Requested User if Authorized
 async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
-       Credentials_exception = HTTPException(
+       credentials_exception = HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Not Authorized",
             headers={"WWW-Authenticated": "bearer"}
@@ -122,13 +119,13 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
            payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
            username = payload.get("sub")
            if username is None:
-               raise Credentials_exception
+               raise credentials_exception
            token_data = TokenData(username=username)
        except InvalidTokenError:
-           raise Credentials_exception
-       user = register_user(UserManager(), username=token_data.username)
+           raise credentials_exception
+       user = registered_user(user_manager(), username=token_data.username)
        if user is None:
-           raise Credentials_exception
+           raise credentials_exception
        return user
 
 # Return Current User Active or Not
@@ -139,33 +136,33 @@ async def get_current_active_user(current_user: Annotated[User, Depends(get_curr
 
 
 @auth_router.post('/new/user')
-async def NewUser(FormData: NewUser):
-    if FormData.username in UserManager():
+async def new_user(new_user_data: NewUser):
+    if new_user_data.username in user_manager():
         raise HTTPException(status_code=409, detail="Pick Another Username")
 
     try:
         # Making Hashed Password
-        HashedPassword = PasswordHashing(FormData.hashed_password)
+        hashed_password = password_hashing(new_user_data.hashed_password)
 
         # New User Insertion Query
-        inser_query = f"INSERT INTO {user_table} (username, hashed_password, email, disabled, created_at) VALUES ('{FormData.username}', '{HashedPassword}', '{FormData.email}', '{FormData.disabled}', Default)"
+        insert_query = f"INSERT INTO {user_table} (username, hashed_password, email, disabled, created_at) VALUES ('{new_user_data.username}', '{hashed_password}', '{new_user_data.email}', '{new_user_data.disabled}', Default)"
 
         # Execeute Query
-        cursor.execute(inser_query)
+        cursor.execute(insert_query)
 
-        return JSONResponse(content=f"User {FormData.username} Added Successfully!", status_code=201)
+        return JSONResponse(content=f"User {new_user_data.username} Added Successfully!", status_code=201)
     except mariadb.Error as err:
-        raise HTTPException(status_code=400, detail=f"User {FormData.username} insertion failed! with error {err}")
+        raise HTTPException(status_code=400, detail=f"User {new_user_data.username} insertion failed! with error {err}")
 
     finally:
         conn.commit()
-        UserManager()
+        user_manager()
 
 
 @auth_router.get("/all/users")
-async def AllUsers(current_user: Annotated[User, Depends(get_current_active_user)]):
+async def all_users(current_user: Annotated[User, Depends(get_current_active_user)]):
     try:
-        allusers = UserManager()
+        allusers = user_manager()
         return JSONResponse(status_code=200, content=allusers)
 
     except mariadb.Error as e:
@@ -175,8 +172,8 @@ async def AllUsers(current_user: Annotated[User, Depends(get_current_active_user
 
 
 @auth_router.post("/token")
-async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> Token:
-    user = authenticate_user(UserManager(), form_data.username, form_data.password)
+async def user_login(login_credentials: Annotated[OAuth2PasswordRequestForm, Depends()]) -> Token:
+    user = authenticate_user(user_manager(), login_credentials.username, login_credentials.password)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
