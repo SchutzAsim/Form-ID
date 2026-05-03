@@ -1,6 +1,7 @@
 # User's DataBase table model
 def all_users_entity(item) -> dict:
     return {
+        # "id": str(item["_id"]),
         "user_id": str(item["user_id"]),
         "username": str(item["username"]),
         "hashed_password": str(item["hashed_password"]),
@@ -16,7 +17,8 @@ def all_users_entitys(items) -> list:
 # Log's DataBase table model
 def home_entity(item) -> dict:
     return {
-        "id": str(item["id"]),
+        "id": str(item["_id"]),
+        "id_no": str(item["id_no"]),
         "Name": item["Name"],
         "Contact": item["Contact"],
         "Service": item["Service"],

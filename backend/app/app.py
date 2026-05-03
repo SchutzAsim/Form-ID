@@ -5,7 +5,7 @@ from fastapi import FastAPI, HTTPException, Depends
 from  fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from dotenv import load_dotenv
-from app.databases.db import cursor, conn
+from app.databases.mongo import conn
 from app.model.model import home_entitys
 from app.Search.search import SimpleSearchIndex
 from app.schema.schema import CreateLog, UpdateLog, UpdateDue
@@ -55,11 +55,12 @@ def user_session(current_user: current_active_user):
 @app.get("/home")
 async def get_logs(current_user: current_active_user):
     # fetch all rows
-    select_query = f"SELECT * FROM {table_name}"
-    cursor.execute(select_query)
-    data = cursor.fetchall()
-    conn.commit()
-    result = home_entitys(data)
+    docs = conn.Shop.logs.find()
+    result = home_entitys(docs)
+
+    if not result:
+        raise HTTPException(status_code=404, detail="Data Not Found!")
+
     return JSONResponse(content=result[::-1], status_code=200)
 
 
