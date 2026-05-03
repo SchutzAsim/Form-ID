@@ -1,5 +1,6 @@
 import os
 from typing import Annotated
+from datetime import date
 import mariadb
 from fastapi import FastAPI, HTTPException, Depends
 from  fastapi.middleware.cors import CORSMiddleware
@@ -41,7 +42,7 @@ app.add_middleware(
 )
 
 # DataBase Table Selection
-table_name = 'logs' if int(os.getenv("SERVER_PORT")) == 8181 else 'test_table'
+table_name = 'logs' # if int(os.getenv("SERVER_PORT")) == 8181 else 'test_table'
 
 
 # User Session
@@ -64,24 +65,24 @@ async def get_logs(current_user: current_active_user):
     return JSONResponse(content=result[::-1], status_code=200)
 
 
-@app.post("/post")
+@app.post("/post", response_model=CreateLog)
 async def post_log(row: CreateLog, current_user: current_active_user):
     # Fix date format for mariadb date insertion
-    date = row.Created_At.title() if row.Created_At.title() == 'Default' else f"'{row.Created_At}'"
+    new_doc_dict = row.model_dump()
+    doc_date = f"{date.today()}" if row.Created_At.title() == 'Default' else f"'{row.Created_At}'"
+    new_doc_dict["Created_At"] = doc_date
     try:
-        # Data Insertion Query
-        insert_query = f"INSERT INTO {table_name} (Name, Contact, Service, Service_Type, Govt_Fee, Service_Charge, Total_Amount, Month, Created_At, Application_ID, Due) VALUES ('{row.Name.title()}', '{row.Contact}', '{row.Service.title()}', '{row.Service_Type.title()}', '{row.Govt_Fee}', '{row.Service_Charge}', '{row.Total_Amount}', '{row.Month.capitalize()}', {date}, '{row.Application_ID}', '{row.Due}')"
+        doc_count = conn.Shop.logs.count_documents({})
+        new_doc_dict["id_no"] = doc_count + 1
 
-        # Execute Query
-        cursor.execute(insert_query)
+        # Insert New Doc
+        new_doc = conn.Shop.logs.insert_one(new_doc_dict)
+        print(new_doc)
 
         return JSONResponse(content=f"Insertion Done Successfully!", status_code=201)
     except mariadb.Error as e:
         return HTTPException(detail=f"Insertion Failed! With Status Code {e}", status_code=500)
 
-    finally:
-        # Commit Table data
-        conn.commit()
 
 
 @app.put("/post/update")
