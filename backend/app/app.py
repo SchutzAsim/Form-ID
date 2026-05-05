@@ -44,8 +44,8 @@ app.add_middleware(
 )
 
 # DataBase Table Selection
-table_name = 'logs' # if int(os.getenv("SERVER_PORT")) == 8181 else 'test_table'
-
+# table_name = 'logs' # if int(os.getenv("SERVER_PORT")) == 8181 else 'test_table'
+collection_name = conn.Shop.logs
 
 # User Session
 @app.get("/user/session")
@@ -58,9 +58,10 @@ def user_session(current_user: current_active_user):
 @app.get("/home")
 async def get_logs(current_user: current_active_user):
     # fetch all rows
-    docs = conn.Shop.logs.find()
+    docs = collection_name.find()
     result = home_entitys(docs)
 
+    # if data not found
     if not result:
         raise HTTPException(status_code=404, detail="Data Not Found!")
 
@@ -79,15 +80,17 @@ async def post_log(row: CreateLog, current_user: current_active_user):
 
     try:
         # Count total no of documents
-        doc_count = conn.Shop.logs.count_documents({})
+        doc_count = collection_name.count_documents({})
+
         # make index for new document
         new_doc_dict["id_no"] = doc_count + 1
 
         # Insert New Doc
-        conn.Shop.logs.insert_one(new_doc_dict)
-
+        collection_name.insert_one(new_doc_dict)
         return JSONResponse(content=f"Insertion Done Successfully!", status_code=201)
-    except mariadb.Error as e:
+
+    # Error in method execution
+    except Exception as e:
         return HTTPException(detail=f"Insertion Failed! With Status Code {e}", status_code=500)
 
 
@@ -106,17 +109,18 @@ async def update_log(row: UpdateLog, current_user: current_active_user):
 
     try:
         # Get Document from Database
-        get_targeted_doc = conn.Shop.logs.find_one({"_id": document_id})
+        get_targeted_doc = collection_name.find_one({"_id": document_id})
 
-        # Update if Document is present in Database
+        # Update if Document is available
         if get_targeted_doc:
-            doc_update = conn.Shop.logs.update_one({"_id": document_id}, {"$set": updated_doc_dict})
+            doc_update = collection_name.update_one({"_id": document_id}, {"$set": updated_doc_dict})
             if doc_update.acknowledged:
                 return JSONResponse(content="Document Update Successfully", status_code=200)
-
+        # if document not found
         else:
             raise HTTPException(status_code=404, detail="Document not found!")
 
+    # Error in method execution
     except Exception as e:
         raise HTTPException(detail=f"Couldn't able to update document due to: {e}", status_code=400)
 
@@ -127,17 +131,20 @@ async def update_due(due_row: UpdateDue, current_user: current_active_user):
     # Convert String to ObjectID for MongoDB compatibility
     document_id = ObjectId(due_row.id)
     try:
-        # Find targeted document
-        get_targeted_doc = conn.Shop.logs.find_one({"_id": document_id})
+        # find document
+        get_targeted_doc = collection_name.find_one({"_id": document_id})
 
-        # If document present make update
+        # update data if document is available
         if get_targeted_doc:
-            doc_due_update = conn.Shop.logs.update_one({"_id": document_id}, {"$set": {"Due": due_row.Due}})
+            doc_due_update = collection_name.update_one({"_id": document_id}, {"$set": {"Due": due_row.Due}})
+            # if update data successfully
             if doc_due_update.acknowledged:
                 return JSONResponse(content="Document Due Field Updated Successfully!", status_code=200)
+        # if document not found
         else:
             raise HTTPException(status_code=404, detail="Document not found!")
 
+    # Error in method execution
     except Exception as e:
         raise HTTPException(detail=f"Couldn't able to update document due to: {e}", status_code=400)
 
@@ -145,18 +152,44 @@ async def update_due(due_row: UpdateDue, current_user: current_active_user):
 @app.get("/search/post/{query}")
 async def search_row(query, current_user: current_active_user):
     try:
+        # search engine
         search_engine = SimpleSearchIndex()
+
         # fetch all documents
-        data = conn.Shop.logs.find()
+        data = collection_name.find()
         rows = home_entitys(data)
 
-        searchTitles = ["Name", "Contact", "Application_ID", "Service", "Service_Type"]
+        # search titles
+        searchTitles = ["id", "Name", "Contact", "Application_ID", "Service", "Service_Type"]
 
+        # make a index, which is categorized data based on search titles
         for row in rows:
             search_engine.add_to_index(searchTitles, row)
 
+        # search requested data from index
         filter_data = search_engine.search(query)
-
         return JSONResponse(content=filter_data[::-1], status_code=200)
+    # Error in method execution
     except:
         raise HTTPException(detail="Not Found", status_code=404)
+
+
+@app.delete("/delete/post")
+async def delete_log(row: str, current_user: current_active_user):
+    # convert str to ObjectID
+    document_id = ObjectId(row)
+    try:
+        # find document
+        find_document = collection_name.find_one({"_id": document_id})
+        # if document found delete it
+        if find_document:
+            delete_document = collection_name.delete_one({"_id": document_id})
+            # if deletion is successful
+            if delete_document.acknowledged:
+                return JSONResponse(content=f"Document deleted successfully!", status_code=202)
+        # if document not found
+        else:
+            raise HTTPException(status_code=404, detail="Document Not Found!")
+    # Error in method execution
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Error: {e}")
