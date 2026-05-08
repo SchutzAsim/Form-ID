@@ -42,8 +42,8 @@ export const Login = () => {
 
             const data = await res.json();
             localStorage.setItem('token', data.access_token);
+            window.location.replace('/');
             setAuthorized(true);
-            navigate('/');
 
         }
         catch (err) {
