@@ -96,7 +96,7 @@ global_connect=values
 VITE_API=http://localhost:8000
 ```
 
-## Instalation
+## Installation
 ```bash
 git clone https://github.com/SchutzAsim/E-Shopmine.git
 
