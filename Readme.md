@@ -1,5 +1,5 @@
 # E-Shopmine
-E-Shopmine is a privacy focus transcations manager system web app that will store all you data on your local computer.
+E-Shopmine is a privacy focus transcations manager system web app.
 
 ## Project Structure
 ```bash
@@ -57,7 +57,7 @@ E-Shopmine
 
 ```
 ## Requirements
-- MariaDB - for the data storage.
+- MongoDB - for the data storage.
 - Docker - for running the server continuously.
 
 ## Prerequisites
@@ -70,26 +70,25 @@ E-Shopmine
 
 ```bash
 # Authentication Secrets
-SECRET_KEY=Value
+SECRET_KEY=values
 ALOGRITHM=HS256
-ACCESS_TOKEN_EXPIRE_MINUTES=Value
+ACCESS_TOKEN_EXPIRE_MINUTES=values
 
 # Server Configurations
-SERVER_PORT=8181
+SERVER_PORT=8000
 SERVER_HOST=0.0.0.0
 SERVER_RELOAD=True
 
-# Database Configurations
-DB_USER=Value
-DB_PASSWORD=Value
-DB_HOST=Value
-DB_PORT=3306
-DB_DATABASE=Value
+# MongoDB Database Configurations
+Mongo_DB_USER=values
+Mongo_DB_PASS=values
+Mongo_DB_HOST=values
+Mongo_DB_DEBUG=False
 
 # frontend server connection
 self_connect=http://localhost:5173
-local_connect=http://Value:5173
-global_connect=Value
+local_connect=http://192.168.29.57:5173
+global_connect=values
 ```
 - Place Another one in Frontend Folder
 ```bash
