@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Login } from './components/Login'
 import { Nav } from './components/Nav'
 import { Home } from './components/Home'
+import { Notification } from './components/Notification'
 import { LogForm } from './components/LogForm'
 import { CardForm } from './components/CardForm'
 import { ContainerContext } from './Context/context'
@@ -16,6 +17,13 @@ function App() {
 
   const navigate = useNavigate();
 
+
+  const [notification, setNotification] = useState({
+    "show": false,
+    "status_code": "",
+    "message": ""
+  })
+  console.log(notification)
 
 
   useEffect(() => {
@@ -38,7 +46,7 @@ function App() {
       }
 
       console.log(session_res)
-      
+
       return session_res
     }
 
@@ -54,7 +62,7 @@ function App() {
     query: ''
   })
   const [searchData, setsearchData] = useState([])
-
+  
   return (
     <>
       <ContainerContext.Provider
@@ -69,7 +77,9 @@ function App() {
             searchData,
             setsearchData,
             authorized,
-            setAuthorized
+            setAuthorized,
+            notification,
+            setNotification
           }
         }>
 

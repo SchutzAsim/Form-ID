@@ -4,11 +4,12 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { ContainerContext } from '../Context/context'
 import { MdModeEdit } from "react-icons/md";
 import { FaTrashAlt } from "react-icons/fa";
+import { Notification } from './Notification';
 
 
 export const Home = () => {
 
-    const { API_Connect, setoldData, searchData, authorized, access_token, setAuthorized } = useContext(ContainerContext)
+    const { API_Connect, setoldData, searchData, authorized, access_token, setAuthorized, notification, setNotification } = useContext(ContainerContext)
 
     const url = useLocation();
     const navigate = useNavigate();
@@ -33,10 +34,14 @@ export const Home = () => {
                         'Content-Type': 'application/json'
                     }
                 });
-                if (!res.ok) console.log("Unable to connect HomeDataBase!");
-                if (res.status === 401) {
-                    navigate('/login')
-                    localStorage.setItem(login_state, false)
+                if (!res.ok || res.status === 401) {
+                    console.log("Unable to connect HomeDataBase!");
+                    setNotification({
+                        ...notification,
+                        "show": true,
+                        "status_code": res.status,
+                        "message": res.statusText
+                    })
                 }
 
                 let HomeData = await res.json();
@@ -81,9 +86,7 @@ export const Home = () => {
     };
 
     if (delete_doc) {
-        // set(() => {
         delete_log();
-        // }, 500);
     };
 
 
@@ -95,6 +98,13 @@ export const Home = () => {
             navigate("/login")
         }
     }
+
+    if (notification.show) {
+        return <>
+        <Notification />
+        </>
+    }
+
 
     return (
         <>
